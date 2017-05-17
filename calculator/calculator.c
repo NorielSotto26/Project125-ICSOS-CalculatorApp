@@ -7,18 +7,17 @@
 #include "../../sdk/dexsdk.h"
 #include "../../sdk/time.h"
 
-int print_menu();
-void print_aboutUs();
-void pointer_menu(int y);
-void print_help();
-void set_coordinates(int x, int y); //initialize panel coordinates
+int print_menu();	//prints the menu frame
+void print_aboutUs();	//prints the about us frame
+void pointer_menu(int y);	//prints the pointer in the menu
+void print_help();	//prints the help frame
 void innerSquare(int r, int c, int x, int y, int color); //prints a button innerSquare
-void outerSquare(int x, int y, int color);
-void print_display(int x, int y, int color);
-void display_button(int x);
-int factorial(int n);
-int evaluate();
-void setup_buttonArray();
+void outerSquare(int x, int y, int color);	//prints the buttons border
+void print_display(int x, int y, int color);	//prints display area
+void display_button(int x);	//fxn for clicking buttons
+int factorial(int n);	
+int evaluate();	//evaluates expressions
+void setup_buttonArray();	//setup buttons array
 void print_button(int r, int c, int x, int y, int color); //print a button
 void print_calculator(int x, int y); //set up initial calculator
 void erase(); //basically covers an area with a black rectangle
@@ -33,12 +32,8 @@ void erase(); //basically covers an area with a black rectangle
 #define right_key 'd'
 #define enter '\n'
 #define quit 'x'
-#define reset 'r'
 #define help 'h'
-#define yes 'y'
-#define no 'n'
 #define start '1'
-#define quit_game '2'
 
 #define YELLOW 54
 #define PALE_YELLOW 62
@@ -65,38 +60,32 @@ char print[20] = "";
 
 int main()
 {
-  
-	char keypress = start;
+	char keypress;
 	int i,j;
-	char str[15];
-	int champion = 0;
 
 	set_graphics(VGA_320X200X256);
-  	set_coordinates(X_coord, Y_coord); //initialize board coordinates
    	setup_buttonArray();
 
 	do{
 		erase(1,1,400,220);
 		
 		keypress=start;
+		if(print_menu()==2) break;	//prints the menu, break if exit chosen
+		erase(1,1,400,220);	//else clears the frame
 
-		if(print_menu()==2) break;
-
-		erase(1,1,400,220);
-
-		print_calculator(X_coord, Y_coord);
+		print_calculator(X_coord, Y_coord);	//prints the calculator UI
 		row=0;
 		col=0;
-		do{
-
+		do{	
+			//ACTION LISTENER
 			if (keypress=(char)getch()){
-			
+				//if 'D' is pressed, move to the right
 				if(keypress==right_key){
 					oldrow = row;
 					oldcol = col;
 					col = (col + 1) % maxcol;
 				}
-				
+				//if 'A' is pressed, move to the left
 				else if(keypress==left_key){
 					oldrow = row;
 					oldcol = col;
@@ -105,7 +94,7 @@ int main()
 					else
 						col--;
 				}
-				
+				//if 'W' is pressed, move to the top
 				else if(keypress==up_key){
 					oldrow = row;
 					oldcol = col;
@@ -114,17 +103,16 @@ int main()
 					else
 						row--;
 				}
-				
+				//if 'S' is pressed, move to the bottom
 				else if(keypress==down_key){
 					oldrow = row;
 					oldcol = col;
 					row = (row + 1) % maxrow;
 				}
-				
+				//if 'Enter' is pressed, display the pressed button to the display area
 				else if(keypress == enter){				
 					display_button(buttons[row][col]);
-					// write_text("Some expression here..",35,35,WHITE,0);
-					if(strcmp(exp,"Exiting...") == 0){
+					if(strcmp(exp,"Exiting...") == 0){	//if the button is the EXIT button, move to the menu
 						erase(1,1,400,220);
 						keypress=start;
 						if(print_menu()==2) keypress = quit;
@@ -137,7 +125,7 @@ int main()
 						strcpy(exp,"");
 					}
 				}
-
+				//if 'H' is pressed, display the help frame
 				else if(keypress==help){
 					print_help();
 					print_calculator(X_coord, Y_coord);
@@ -145,7 +133,6 @@ int main()
 					col=0;
 					write_text(exp,35,35,WHITE,0);
 				}
-				
 				// update the display of the selected and previously selected
 				if(keypress==right_key || keypress==left_key || keypress==up_key || keypress==down_key){
 					if(oldcol == 0 && oldrow == 3) {
@@ -165,62 +152,62 @@ int main()
 	set_graphics(VGA_TEXT80X25X16);
 	clrscr();
 }
-
+//function for printing the menu
 int print_menu(){
 	char keypress = start;
 	int i,j,choice=0;;
 
 	do{
   	 	write_text(" ",5,5,GRAY,0); 
-		write_text(" 0 X 1 / 5 % 8 - 3 + 9 ! 2 ^ 7 4 X",0,15,WHITE,0);
-		write_text(" /                               -",0,35,WHITE,0);
-		write_text(" 7                               9",0,55,WHITE,0);
-		write_text(" +                               X",0,75,WHITE,0);
-		write_text(" 3                               4",0,95,WHITE,0);
-		write_text(" -                               ^",0,115,WHITE,0);
-		write_text(" 6                               5",0,135,WHITE,0);
-		write_text(" !                               %",0,155,WHITE,0);
-		write_text(" 5 % 8 - 3 + 9 ! 2 ^ 7 4 X 1 0 X 1",0,175,WHITE,0);
-		write_text("       [PRESS 'H' FOR HELP]       ",0,188,GRAY,0);
-		write_text("ICS OS",140,35,ROYAL_BLUE,0);
-		write_text("CALCULATOR",120,55,ROYAL_BLUE,0);
-
-
-		write_text("1   CONTINUE",110,95,ROYAL_BLUE,0);
-		write_text("2   ABOUT",110,115,ROYAL_BLUE,0);
-		write_text("3   EXIT",110,135,ROYAL_BLUE,0);
+		write_text(" 0 X 1 / 5 % 8 - 3 + 9 ! 2 ^ 7 4 X",2,15,RED,0);
+		write_text(" /                               -",2,35,RED,0);
+		write_text(" 7                               9",2,55,RED,0);
+		write_text(" +                               X",2,75,RED,0);
+		write_text(" 3                               4",2,95,RED,0);
+		write_text(" -                               ^",2,115,RED,0);
+		write_text(" 6                               5",2,135,RED,0);
+		write_text(" !                               %",2,155,RED,0);
+		write_text(" 5 % 8 - 3 + 9 ! 2 ^ 7 4 X 1 0 X 1",2,175,RED,0);
+		write_text("       [PRESS 'H' FOR HELP]       ",2,188,GRAY,0);
+		write_text("ICS OS",135,35,WHITE,0);
+		write_text("CALCULATOR",120,55,WHITE,0);
+		write_text("1   CONTINUE",110,95,WHITE,0);
+		write_text("2   ABOUT",110,115,WHITE,0);
+		write_text("3   EXIT",110,135,WHITE,0);
+		//switch case for printing the pointer
 		switch(choice){
 			case 0:
-				pointer_menu(95);
+				pointer_menu(95);	//moves the pointer to '1   CONTINUE'
 				break;
 			case 1:
-				pointer_menu(115);
+				pointer_menu(115);	//moves the pointer to '2   ABOUT'
 				break;
 			case 2:
-				pointer_menu(135);
+				pointer_menu(135);	//moves the pointer to '3   EXIT'
 				break;
 		}
-		if (keypress=(char)getch()){
-			if(keypress==down_key){
+		//ACTION LISTENER
+		if (keypress=(char)getch()){	
+			if(keypress==down_key){			//if 'S' is pressed, move the pointer to the bottom
 				choice = (choice + 1) % 3;
-			}else if(keypress==up_key){
+			}else if(keypress==up_key){		//if 'W' is pressed, move the pointer to the top
 				choice = choice - 1;
 				if(choice < 0) choice = 2;
-			}else if(keypress==help){
+			}else if(keypress==help){		//if 'H' is pressed, print the help frame
 				print_help();
-			}else if(keypress==enter){
-				if(choice == 0) return 0;
-				else if(choice == 1){
+			}else if(keypress==enter){		//if 'ENTER' is pressed, execute the chosen choice
+				if(choice == 0) return 0;		//1 - EXIT
+				else if(choice == 1){			//2 - ABOUT US
 					erase(1,1,400,220);
 					print_aboutUs();		
 					erase(1,1,400,220);
 				}
-				else if(choice == 2) return 2;
+				else if(choice == 2) return 2;	//3 - EXIT
 			}
 		}
 	}while(1);
 }
-
+//prints the about us frame
 void print_aboutUs(){
 	char keypress = start;
 
@@ -237,21 +224,22 @@ void print_aboutUs(){
 		if (keypress=(char)getch()) return;
 	}while(1);
 }
-
+//positions the pointer in the menu
 void pointer_menu(int y){
 	int i,j;
 	for(i=0;i!=7;i++) for(j=0;j!=7;j++) write_pixel(85+i,95+j,BLACK);
 	for(i=0;i!=7;i++) for(j=0;j!=7;j++) write_pixel(85+i,115+j,BLACK);
 	for(i=0;i!=7;i++) for(j=0;j!=7;j++) write_pixel(85+i,135+j,BLACK);
-	for(i=0;i!=7;i++) for(j=0;j!=7;j++) write_pixel(85+i,y+j,WHITE);
+	for(i=0;i!=7;i++) for(j=0;j!=7;j++) write_pixel(85+i,y+j,RED);
 }
-
+//prints the help frame
 void print_help(){
 	char keypress = start;
 	int i,j;
+	//prints the display in the middle
 	for(i=0;i!=180;i++) for(j=0;j!=130;j++){
-		if(i<3 || i>176 || j<3 || j>126) write_pixel(70+i,35+j,ROYAL_BLUE);
-		else write_pixel(70+i,35+j,BLACK);
+		if(i<3 || i>176 || j<3 || j>126) write_pixel(70+i,35+j,ROYAL_BLUE);	//prints border
+		else write_pixel(70+i,35+j,BLACK);									//prints main
 	}
 	write_text("CONTROLS",80,45,WHITE,0);
 	write_text("W - UP KEY",80,60,WHITE,0);
@@ -269,22 +257,8 @@ void print_help(){
 		}
 	}while(1);
 }
-
-void set_coordinates(int x, int y){
-	int i, j, a, b;
-	
-	a = x;
-	b = y;
-	
-	for(i=0; i<maxrow; i++, b+=24){
-		for(j=0; j<maxcol; j++, a+=31){
-			bulbs_x[i][j] = a;
-			bulbs_y[i][j] = b;
-		}
-		a=x;
-	}
-}
-
+//setup int array for buttons
+//used as identification for the buttons
 void setup_buttonArray(){
 	int i,j,k=0;
 	for (i = 0; i < maxrow; i++){
@@ -292,9 +266,8 @@ void setup_buttonArray(){
 			buttons[i][j] = ++k;
 		}
 	}
-	
 }
-
+//function for displaying the entered button in the display area
 void display_button(int x){
 	erase(35,35,250,10);
 	switch(x){
@@ -403,10 +376,14 @@ void display_button(int x){
 			write_text(exp,35,35,WHITE,0);
 			break;
 		case 27:
-			strcat(exp,"S");
+			strcat(exp,"Sq(");
 			write_text(exp,35,35,WHITE,0);
 			break;
 		case 28:
+			if(checkValidity(exp) == 0){
+				write_text("invalid expression...",35,35,WHITE,0);
+				break;
+			}
 			sprintf(print, "%d", evaluate());
 			strcat(exp, " = ");
 			strcat(exp, print);
@@ -416,6 +393,22 @@ void display_button(int x){
 	}
 }
 
+int isOperation(char op){
+	if(op == 'x' || op == '/' || op == '+' || op == '-' || op == '^' || op == '%' || op == '!' || op == 'S' || op == '.' || op == 'P' || op == 'e'){
+		return 1;
+	}
+	return 0;
+}
+
+int checkValidity(char exp[20]){
+	int i;
+	if(isOperation(exp[0])) return 0;
+	for (i=0;i<strlen(exp)-1;i++){
+		if(isOperation(exp[i]) == 1 && isOperation(exp[i+1]) == 1) return 0;
+	}
+	return 1;
+}
+//function for evaluating the expression
 int evaluate(){
 	int answer[20];
 	int operand[20];
@@ -424,6 +417,7 @@ int evaluate(){
 	int operand_idx = 0;
 	int operator_TOS = 0;
 	int i = 0, j = 0;
+	int isSquare = 0,counter = 0;
 	while(exp[i] != '\0'){
 		if(exp[i] == '1'){
 			operand[operand_idx] = 1;
@@ -469,6 +463,7 @@ int evaluate(){
 			answer_TOS++;
 			operand_idx = 0;
 		}
+		//OPERATION: ADDTION
 		if(exp[i] == '+'){
 			if(operator_TOS == 0){
 				operator[operator_TOS] = '+';
@@ -506,7 +501,9 @@ int evaluate(){
 				operator[operator_TOS] = '+';
 				operator_TOS++;
 			}
-		}else if(exp[i] == '-'){
+		}
+		//OPERATION: SUBTRACTIION
+		else if(exp[i] == '-'){
 			if(operator_TOS == 0){
 				operator[operator_TOS] = '-';
 				operator_TOS++;
@@ -543,7 +540,9 @@ int evaluate(){
 				operator[operator_TOS] = '-';
 				operator_TOS++;
 			}
-		}else if(exp[i] == 'x'){
+		}
+		//OPERATION: MULTIPLICATION
+		else if(exp[i] == 'x'){
 			if(operator_TOS == 0){
 				operator[operator_TOS] = 'x';
 				operator_TOS++;
@@ -570,7 +569,9 @@ int evaluate(){
 				operator[operator_TOS] = 'x';
 				operator_TOS++;
 			}
-		}else if(exp[i] == '/'){
+		}
+		//OPERATION: DIVISION
+		else if(exp[i] == '/'){
 			if(operator_TOS == 0){
 				operator[operator_TOS] = '/';
 				operator_TOS++;
@@ -597,7 +598,9 @@ int evaluate(){
 				operator[operator_TOS] = '/';
 				operator_TOS++;
 			}
-		}else if(exp[i] == '%'){
+		}
+		//OPERATION: MODULO
+		else if(exp[i] == '%'){
 			if(operator_TOS == 0){
 				operator[operator_TOS] = '%';
 				operator_TOS++;
@@ -624,13 +627,20 @@ int evaluate(){
 				operator[operator_TOS] = '%';
 				operator_TOS++;
 			}
-		}else if(exp[i] == '^'){
+		}
+		//OPERATION: EXPONENT
+		else if(exp[i] == '^'){
 			operator[operator_TOS] = '^';
 			operator_TOS++;
-		}else if(exp[i] == '('){
+		}
+		//OPERATION: OPEN PARENTHESIS
+		else if(exp[i] == '('){
 			operator[operator_TOS] = '(';
 			operator_TOS++;
-		}else if(exp[i] == ')'){
+			if(isSquare) counter++;
+		}
+		//OPERATION: CLOSING PARENTHESIS
+		else if(exp[i] == ')'){
 			while(operator[operator_TOS - 1] != '('){
 				if(operator[operator_TOS - 1] == '^'){
 					int x = answer[answer_TOS - 2];
@@ -669,8 +679,22 @@ int evaluate(){
 			}
 			operator[operator_TOS - 1] = '\0';
 			operator_TOS--;
-		}else if(exp[i] == '!'){
+
+			if(isSquare){
+				counter--;
+				if(counter==0){
+					isSquare = 0;
+					answer[answer_TOS-1] = squareRoot(answer[answer_TOS-1]);
+				}
+			}
+		}
+		//OPERATION: FACTORIAL
+		else if(exp[i] == '!'){
 			answer[answer_TOS - 1] = factorial(answer[answer_TOS - 1]);
+		}
+		else if(exp[i] == 'S'){
+			i++;
+			isSquare = 1;
 		}
 		i++;
 	}
@@ -722,114 +746,58 @@ int factorial(int n){
 		return 1;
 	}
 }
-
+int squareRoot(int n){
+	int x = n/2;
+	while((x)!=0){
+		if(x*x == n) return x;
+		x--;
+	}
+	return 0;
+}
+//prints the button with the outer and inner function
+void print_button(int r, int c, int x, int y, int color){
+	outerSquare(x, y, color);
+	innerSquare(r, c, x, y, color);
+}
+//prints outer portion of the button
 void outerSquare(int x, int y, int color){
-	int i;
+	int i,j;
 	for (i=0;i<32;i++)write_pixel(i+x,0+y,color);
 	for (i=0;i<32;i++)write_pixel(i+x,1+y,color);
 
-	for (i=0;i<2;i++)write_pixel(i+x,2+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,2+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,3+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,3+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,4+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,4+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,5+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,5+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,6+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,6+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,7+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,7+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,8+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,8+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,9+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,9+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,10+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,10+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,11+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,11+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,12+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,12+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,13+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,13+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,14+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,14+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,15+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,15+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,16+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,16+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,17+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,17+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,18+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,18+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,19+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,19+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,20+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,20+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,21+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,21+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,22+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,22+y,color);
-	for (i=0;i<2;i++)write_pixel(i+x,23+y,color);
-	for (i=30;i<32;i++)write_pixel(i+x,23+y,color);
+	for (j=2;j<24;j++){
+		for (i=0;i<2;i++)write_pixel(i+x,j+y,color);
+		for (i=30;i<32;i++)write_pixel(i+x,j+y,color);
+	}
 
 	for (i=0;i<32;i++)write_pixel(i+x,24+y,color);
 	for (i=0;i<32;i++)write_pixel(i+x,25+y,color);
 
 }
-
+//prints inner portion of the button
 void innerSquare(int r, int c, int x, int y, int color){
-	int i;
-	
-	for (i=4;i<28;i++)write_pixel(i+x,4+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,5+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,6+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,7+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,8+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,9+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,10+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,11+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,12+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,13+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,14+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,15+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,16+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,17+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,18+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,19+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,20+y,color);
-	for (i=4;i<28;i++)write_pixel(i+x,21+y,color);
+	int i,j;
+	for (i=4;i<28;i++) for (j=4;j<22;j++) write_pixel(i+x,j+y,color);
 }
-
-void print_button(int r, int c, int x, int y, int color){
-
-	outerSquare(x, y, color);
-	innerSquare(r, c, x, y, color);
-	
-}
-
-
-void print_calculator(int x, int y){ //set up initial board 
+ //set up initial board 
+void print_calculator(int x, int y){
 
 	int i, j, a, b;
  	a=x;
  	b=y;
- 	char str[15];
-
+ 	//prints help message at the upper left
    	write_text(" PRESS 'H' FOR HELP   CALCULATOR",15,5,WHITE,0); 
-
+   	//prints the display area
    	print_display(a,25,GRAY);
-	
+	//prints the buttons
 	for(i=0; i<maxrow; i++, b+=32){
 		for(j=0; j<maxcol; j++, a+=40)
 			print_button(i, j, a, b, GRAY);
 		a=x;
 	}
 
-
 	outerSquare(X_coord,Y_coord,WHITE);
 	print_button(0, 0, X_coord, Y_coord+96, RED);
-	//display legend
 
 	//ROW 1
 	write_text("1",36,78,BLACK,0);
@@ -837,8 +805,8 @@ void print_calculator(int x, int y){ //set up initial board
 	write_text("3",116,78,BLACK,0);
 	write_text("(",156,78,BLACK,0);
 	write_text(")",196,78,BLACK,0);
-	write_text("CE",230,78,BLACK,0);
-	write_text("AC",270,78,BLACK,0);
+	write_text("AC",230,78,BLACK,0);
+	write_text("CE",270,78,BLACK,0);
 
 	//ROW 2
 	write_text("4",36,110,BLACK,0);
@@ -864,16 +832,11 @@ void print_calculator(int x, int y){ //set up initial board
 	write_text(".",116,174,BLACK,0);
 	write_text("!",156,174,BLACK,0);
 	write_text("%",196,174,BLACK,0);
-	write_text("S",236,174,BLACK,0);
+	write_text("Sq",230,174,BLACK,0);
 	write_text("=",276,174,BLACK,0);
-
-	/*write_text("Up: W",26,205,WHITE,0);
-	write_text("Down: W",76,205,WHITE,0);
-	write_text("Left: W",126,205,WHITE,0);
-	write_text("Right: W",176,205,WHITE,0);*/
 	
 }
-
+//prints the display area 
 void print_display(int x, int y, int color){
 	int i,j;
 	for (i=0;i<272;i++)write_pixel(i+x,0+y,color);
@@ -888,8 +851,8 @@ void print_display(int x, int y, int color){
 	for (i=0;i<272;i++)write_pixel(i+x,35+y,color);
 	for (i=0;i<272;i++)write_pixel(i+x,36+y,color);
 }
-
-void erase(int x, int y, int w, int h){ //basically covers an area with a black rectangle 
+ //covers an area with black
+void erase(int x, int y, int w, int h){
    int i,j;
    for (i=y;i<=(y+h);i++)
       for (j=x;j<=(x+w);j++)
